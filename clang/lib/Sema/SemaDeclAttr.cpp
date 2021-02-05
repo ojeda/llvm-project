@@ -2153,6 +2153,15 @@ static void handleDependencyAttr(Sema &S, Scope *Scope, Decl *D,
   D->addAttr(::new (S.Context) CarriesDependencyAttr(S.Context, AL));
 }
 
+static void handleSafeAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
+  // If this is spelled as the standard C2x attribute, but not in C2x, warn
+  // about using it as an extension.
+  if (!S.getLangOpts().C2x && AL.isC2xAttribute())
+    S.Diag(AL.getLoc(), diag::ext_c2x_attr) << AL;
+
+  D->addAttr(::new (S.Context) SafeAttr(S.Context, AL));
+}
+
 static void handleUnusedAttr(Sema &S, Decl *D, const ParsedAttr &AL) {
   bool IsCXX17Attr = AL.isCXX11Attribute() && !AL.getScopeName();
 
@@ -7195,6 +7204,9 @@ static void ProcessDeclAttribute(Sema &S, Scope *scope, Decl *D,
     break;
   case ParsedAttr::AT_Unused:
     handleUnusedAttr(S, D, AL);
+    break;
+  case ParsedAttr::AT_Safe:
+    handleSafeAttr(S, D, AL);
     break;
   case ParsedAttr::AT_NotTailCalled:
     handleSimpleAttributeWithExclusions<NotTailCalledAttr, AlwaysInlineAttr>(

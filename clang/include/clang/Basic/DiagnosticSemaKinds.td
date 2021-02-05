@@ -8212,6 +8212,8 @@ def ext_cxx17_attr : Extension<
   "use of the %0 attribute is a C++17 extension">, InGroup<CXX17>;
 def ext_cxx20_attr : Extension<
   "use of the %0 attribute is a C++20 extension">, InGroup<CXX20>;
+def ext_c2x_attr : Extension<
+  "use of the %0 attribute is a C2x extension">, InGroup<C2x>;
 
 def warn_unused_comparison : Warning<
   "%select{equality|inequality|relational|three-way}0 comparison result unused">,

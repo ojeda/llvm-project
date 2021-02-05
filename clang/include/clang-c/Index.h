@@ -2627,7 +2627,8 @@ enum CXCursorKind {
   CXCursor_WarnUnusedAttr = 439,
   CXCursor_WarnUnusedResultAttr = 440,
   CXCursor_AlignedAttr = 441,
-  CXCursor_LastAttr = CXCursor_AlignedAttr,
+  CXCursor_SafeAttr = 442,
+  CXCursor_LastAttr = CXCursor_SafeAttr,
 
   /* Preprocessing */
   CXCursor_PreprocessingDirective = 500,

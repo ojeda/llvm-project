@@ -2422,6 +2422,12 @@ def ObjCRequiresPropertyDefs : InheritableAttr {
   let SimpleHandler = 1;
 }
 
+def Safe : InheritableAttr {
+  let Spellings = [C2x<"", "safe">];
+  let Subjects = SubjectList<[Function]>;
+  let Documentation = [Undocumented];
+}
+
 def Unused : InheritableAttr {
   let Spellings = [CXX11<"", "maybe_unused", 201603>, GCC<"unused">,
                    C2x<"", "maybe_unused">];

@@ -118,6 +118,8 @@ static CXCursorKind GetCursorKind(const Attr *A) {
     return CXCursor_FlagEnum;
   case attr::Convergent:
     return CXCursor_ConvergentAttr;
+  case attr::Safe:
+    return CXCursor_SafeAttr;
   case attr::WarnUnused:
     return CXCursor_WarnUnusedAttr;
   case attr::WarnUnusedResult:
