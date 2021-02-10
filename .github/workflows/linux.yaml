@@ -1,0 +1,49 @@
+on:
+  push:
+    branches: [linux]
+
+jobs:
+  libclang:
+    runs-on: ubuntu-20.04
+
+    strategy:
+      matrix:
+        version: [
+          11.0.1,
+        ]
+        target: [
+          x86_64-unknown-linux-gnu,
+        ]
+
+    steps:
+      # Setup: checkout
+      - uses: actions/checkout@v2
+        with:
+          ref: llvmorg-${{ matrix.version }}
+
+      # Setup: Ninja
+      - run: sudo apt-get install -y ninja-build
+
+      # Setup: CMake
+      - run: sudo apt-get install -y cmake
+
+      # Build
+      - run: mkdir build
+      - run: cd build && cmake -G Ninja -DCMAKE_BUILD_TYPE=Release -DLLVM_TARGETS_TO_BUILD=X86 -DLLVM_ENABLE_PROJECTS=clang -DLLVM_BUILD_STATIC=ON -DLLVM_STATIC_LINK_CXX_STDLIB=ON ../llvm
+      - run: cd build && ninja lib/libclang.so
+      - run: ls -l build/lib
+      - run: mv build/lib/libclang.so build/lib/libclang-${{ matrix.version }}-${{ matrix.target }}.so
+      - run: cd build/lib && sha256sum -b build/lib/libclang-${{ matrix.version }}-${{ matrix.target }}.so | tee build/lib/libclang-${{ matrix.version }}-${{ matrix.target }}.so.sha256
+
+      # Report
+      - run: ls -l build/lib
+      - run: size build/lib/libclang-${{ matrix.version }}-${{ matrix.target }}.so
+      - run: file build/lib/libclang-${{ matrix.version }}-${{ matrix.target }}.so
+      - run: readelf -hd build/lib/libclang-${{ matrix.version }}-${{ matrix.target }}.so
+      - run: objdump -T build/lib/libclang-${{ matrix.version }}-${{ matrix.target }}.so
+
+      # Upload
+      - uses: actions/upload-artifact@v2
+        with:
+          name: libclang-${{ matrix.version }}-${{ matrix.target }}
+          path: build/lib/libclang-${{ matrix.version }}-${{ matrix.target }}*
